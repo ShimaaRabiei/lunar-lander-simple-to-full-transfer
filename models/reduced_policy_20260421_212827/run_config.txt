@@ -1,0 +1,31 @@
+Purpose:
+This is the reduced/simple-model policy used for zero-shot transfer to the full Lunar Lander model.
+
+Original run folder:
+reduced_lander_safe0_lamlr0_lr5e-06_stdanneal_nenv8_warm_norm1_seed42_20260421_212827
+
+Clean model folder:
+models/reduced_policy_20260421_212827/
+
+Training script:
+src/train_reduced_lander_objectivefix.py
+
+Original training script name:
+train_reduced_lander_official_success_settle_direct_theta_objectivefix.py
+
+Transfer/evaluation script:
+src/compare_simple_to_full_transfer.py
+
+Common metrics script:
+src/common_metrics_from_saved_trajectories.py
+
+Result folder:
+results/zero_shot_transfer_158_seeds/
+
+Warm start:
+reduced_lander_safe0_lamlr0_lr1e-05_stdanneal_nenv8_warm_norm1_seed42_20260421_195601/best_model.pt
+
+Important model files:
+best_model.pt
+best_obsnorm.npz
+best_metrics.json

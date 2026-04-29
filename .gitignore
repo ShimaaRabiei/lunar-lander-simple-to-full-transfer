@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.vscode/
+.idea/
+
+*.gif
+*.mp4
+*.avi
+*.zip
+
+.DS_Store

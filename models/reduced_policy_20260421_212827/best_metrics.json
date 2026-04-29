@@ -1,0 +1,14 @@
+{
+  "epoch": 4,
+  "global_step": 32768,
+  "eval_return": 102.85700710386044,
+  "eval_cost": 372.44,
+  "eval_success": 0.55,
+  "eval_crashed": 0.34,
+  "train_success_rate": 0.55,
+  "train_crash_rate": 0.45,
+  "best_score": [
+    0.55,
+    102.85700710386044
+  ]
+}
