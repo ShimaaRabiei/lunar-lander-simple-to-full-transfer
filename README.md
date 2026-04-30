@@ -72,6 +72,21 @@ This folder includes:
 
 The plots summarize performance across regimes such as nominal, windy, biased, delay, and hard settings.
 
+## Overlay videos
+
+Overlay comparison videos across deployment regimes are included in:
+
+`media/videos/`
+
+Included examples:
+
+- `official_compare_nominal_seed10230.mp4`
+- `official_compare_biased_seed10230.mp4`
+- `official_compare_windy_seed10230.mp4`
+- `official_compare_hard_seed10230.mp4`
+
+These videos show qualitative side-by-side behavior of the lander across different regimes.
+
 ## Goal
 
 The goal of this project is to evaluate whether a policy trained in a simple/reduced Lunar Lander setting can transfer zero-shot to the full Lunar Lander setting, and how that transfer compares with alternative controllers and regime variations.
