@@ -5,8 +5,10 @@ __pycache__/
 .idea/
 
 *.gif
-*.mp4
 *.avi
+
+!media/videos/*.mp4
 *.zip
 
 .DS_Store
+
