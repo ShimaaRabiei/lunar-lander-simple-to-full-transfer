@@ -5,6 +5,7 @@ __pycache__/
 .idea/
 
 *.gif
+!media/gifs/*.gif
 *.avi
 
 !media/videos/*.mp4

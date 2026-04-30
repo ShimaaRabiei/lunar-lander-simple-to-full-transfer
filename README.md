@@ -83,6 +83,24 @@ Overlay comparison videos across deployment regimes are included in `media/video
 
 These videos show qualitative side-by-side behavior of the lander across different deployment regimes.
 
+### GIF previews
+
+#### Nominal regime
+
+![Nominal overlay](media/gifs/official_compare_nominal_seed10230.gif)
+
+#### Biased regime
+
+![Biased overlay](media/gifs/official_compare_biased_seed10230.gif)
+
+#### Windy regime
+
+![Windy overlay](media/gifs/official_compare_windy_seed10230.gif)
+
+#### Hard regime
+
+![Hard overlay](media/gifs/official_compare_hard_seed10230_1.gif)
+
 ## Goal
 
 The goal of this project is to evaluate whether a policy trained in a simple/reduced Lunar Lander setting can transfer zero-shot to the full Lunar Lander setting, and how that transfer compares with alternative controllers and regime variations.
