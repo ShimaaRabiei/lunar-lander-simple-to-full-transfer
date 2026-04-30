@@ -74,18 +74,14 @@ The plots summarize performance across regimes such as nominal, windy, biased, d
 
 ## Overlay videos
 
-Overlay comparison videos across deployment regimes are included in:
+Overlay comparison videos across deployment regimes are included in `media/videos/`.
 
-`media/videos/`
+- [Nominal regime overlay video](media/videos/official_compare_nominal_seed10230.mp4)
+- [Biased regime overlay video](media/videos/official_compare_biased_seed10230.mp4)
+- [Windy regime overlay video](media/videos/official_compare_windy_seed10230.mp4)
+- [Hard regime overlay video](media/videos/official_compare_hard_seed10230_1.mp4)
 
-Included examples:
-
-- `official_compare_nominal_seed10230.mp4`
-- `official_compare_biased_seed10230.mp4`
-- `official_compare_windy_seed10230.mp4`
-- `official_compare_hard_seed10230.mp4`
-
-These videos show qualitative side-by-side behavior of the lander across different regimes.
+These videos show qualitative side-by-side behavior of the lander across different deployment regimes.
 
 ## Goal
 
