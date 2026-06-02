@@ -1,0 +1,21 @@
+{
+  "variation_lambda": 0.0,
+  "theta_limit_deg": 20,
+  "step_penalty": 0.02,
+  "timeout_penalty": 0.0,
+  "episodes": 333,
+  "success_rate": 0.5225225225225225,
+  "crash_rate": 0.1021021021021021,
+  "out_of_bounds_rate": 0.006006006006006006,
+  "mean_task_return": 139.63600472243195,
+  "mean_train_return": 125.5874161338441,
+  "mean_variation": 2.93187295865819,
+  "mean_length": 702.4294294294294,
+  "mean_discounted_task_return": 42.274649993882534,
+  "mean_discounted_variation": 0.2055766214053608,
+  "mean_discounted_train_return": 40.289207615873636,
+  "mean_final_speed": 0.013113185113336454,
+  "mean_final_both_legs_contact": 0.7447447447447447,
+  "mean_final_lander_awake": 0.4774774774774775,
+  "landing_candidate_rate": 0.44744744744744747
+}

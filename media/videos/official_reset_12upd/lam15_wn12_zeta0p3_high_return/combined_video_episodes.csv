@@ -1,0 +1,19 @@
+combined_video,episode_index,full_common_task_return,full_length,full_official_return,full_success,keep,pair,reduced_length,reduced_success,reduced_task_return,seed
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam15_wn12_zeta0p3_high_return\pair_01_seed_1511897467_combined.mp4,0,195.11791159482738,875,171.35702553644148,True,True,1,870,True,197.3923033268191,1511897467
+,1,-34.90407638206704,1000,-57.16808393484058,False,False,,1000,False,18.871262386045434,1156069968
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam15_wn12_zeta0p3_high_return\pair_02_seed_747316575_combined.mp4,2,181.7105336357049,555,168.86080571328205,True,True,2,546,True,183.55360233848904,747316575
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam15_wn12_zeta0p3_high_return\pair_03_seed_329122178_combined.mp4,3,216.93951983086805,588,205.8732983684974,True,True,3,475,True,250.460001648101,329122178
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam15_wn12_zeta0p3_high_return\pair_04_seed_646131025_combined.mp4,4,207.88743645179358,788,187.11572149941682,True,True,4,777,True,207.71592967286705,646131025
+,5,235.6189310063929,522,222.19592303119688,True,False,,1000,False,27.790621107187956,386281797
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam15_wn12_zeta0p3_high_return\pair_05_seed_469159189_combined.mp4,6,219.29907553709447,523,205.94317046619477,True,True,5,521,True,220.0816764036195,469159189
+,7,210.03581917654347,457,198.5023939463352,True,False,,1000,False,34.10664431457411,1241291005
+,8,216.90040375384643,348,208.6383285905926,True,False,,378,False,-21.359125503267606,825866776
+,9,165.36595499374707,784,153.1059826683235,True,False,,1000,False,19.90985866826088,401355324
+,10,202.65992372471985,403,192.1368289321955,True,False,,1000,False,32.68108906490955,847717680
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam15_wn12_zeta0p3_high_return\pair_06_seed_1843468895_combined.mp4,11,218.07041946516173,490,207.80069722850897,True,True,6,508,True,216.64732574985837,1843468895
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam15_wn12_zeta0p3_high_return\pair_07_seed_2089784483_combined.mp4,12,194.23790523822188,405,184.47747357288443,True,True,7,417,True,193.89876896943895,2089784483
+,13,154.56938911642783,809,135.50678805686582,True,False,,1000,False,18.267669246542205,2027634781
+,14,178.07176508500032,721,164.27594127460435,True,False,,1000,False,11.22785921590397,1649752016
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam15_wn12_zeta0p3_high_return\pair_08_seed_2013698973_combined.mp4,15,221.4440172780382,392,212.92803011080835,True,True,8,388,True,223.09607218075539,2013698973
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam15_wn12_zeta0p3_high_return\pair_09_seed_123927870_combined.mp4,16,181.51390435976467,611,167.55338415678355,True,True,9,602,True,184.7775050708791,123927870
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam15_wn12_zeta0p3_high_return\pair_10_seed_1821182807_combined.mp4,17,222.71480179025494,446,211.51289252328772,True,True,10,443,True,223.07755187507718,1821182807

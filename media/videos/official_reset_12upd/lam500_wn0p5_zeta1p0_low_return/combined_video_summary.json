@@ -1,0 +1,8 @@
+{
+  "saved_pairs": 10,
+  "selection": "both_success",
+  "rows_scanned": 22,
+  "lambda_value": 500.0,
+  "inner_wn": 0.5,
+  "inner_zeta": 1.0
+}
