@@ -1,0 +1,11 @@
+{
+  "checkpoint": "C:\\Users\\rabiei\\My Research\\reduced_order_lunar_lander_runs\\reduced_order_lander_lam0_theta20_step002_warm_lam0_20260527_233243\\final_model.pt",
+  "seed_file": "C:\\Users\\rabiei\\My Research\\reduced_order_lunar_lander_runs\\reduced_order_lander_lam0_theta20_step002_warm_lam0_20260527_233243\\fixed_stock_reset_seeds_100.npy",
+  "num_saved_videos": 5,
+  "num_scanned": 11,
+  "success_rate_scanned": 0.45454545454545453,
+  "crash_rate_scanned": 0.18181818181818182,
+  "out_of_bounds_rate_scanned": 0.09090909090909091,
+  "mean_task_return_scanned": 125.46493619386655,
+  "mean_length_scanned": 591.0909090909091
+}

@@ -1,106 +1,369 @@
-# Zero-Shot Transfer from Simple to Full Lunar Lander
+# Zero-Shot Transfer from Reduced-Order to Full LunarLander
 
-This repository contains code and results for studying zero-shot transfer from a simplified/reduced Lunar Lander model to the full Lunar Lander model.
+**Author:** Shima Rabiei
 
-The main idea is to train a reduced-action policy in a simpler model, then evaluate that policy in the full model without additional training. The project also compares transfer behavior across several regimes and controllers.
+This repository contains code and results for studying zero-shot transfer from a reduced-order LunarLander model to the full LunarLander model. The reduced policy is trained in a simplified environment where it commands a desired attitude reference. During deployment, the same policy is evaluated in the full LunarLander model, and an inner-loop controller tracks the commanded attitude.
 
-## Project contents
+The goal is to study whether penalizing rapid changes in the commanded attitude during reduced-order training can improve transfer to the full-order system.
 
-- `src/` — training, transfer evaluation, common-metrics, and plotting scripts
-- `models/reduced_policy_20260421_212827/` — final reduced/simple-model policy
-- `results/zero_shot_transfer_158_seeds/` — common-seed evaluation results over 158 seeds
-- `logs/` — training/evaluation logs
+---
 
-## Main model
+## Background: Official LunarLander
 
-The selected reduced policy is stored in:
+The official continuous LunarLander observation is
 
-`models/reduced_policy_20260421_212827/`
+$$
+(x,\; y,\; v_x,\; v_y,\; \theta,\; \dot{\theta},\; c_L,\; c_R),
+$$
 
-Important files:
+where $x,y$ are the lander position coordinates, $v_x,v_y$ are the linear velocities, $\theta$ is the attitude angle, $\dot{\theta}$ is the angular velocity, and $c_L,c_R$ indicate left and right leg contact.
 
-- `best_model.pt`
-- `best_obsnorm.npz`
-- `best_metrics.json`
-- `run_config.txt`
+The continuous action has two components,
 
-Original run folder:
+$$
+u = (u_{\mathrm{main}},\; u_{\mathrm{side}}),
+$$
 
-`reduced_lander_safe0_lamlr0_lr5e-06_stdanneal_nenv8_warm_norm1_seed42_20260421_212827`
+where $u_{\mathrm{main}}$ controls the main engine and $u_{\mathrm{side}}$ controls the side boosters.
 
-## Main scripts
+The official reward includes shaping terms for distance to the landing pad, velocity, angle, leg contact, main-engine fuel use, side-engine fuel use, and terminal crash or landing rewards. An episode terminates when the lander crashes, leaves the viewport, or becomes not awake. This repository keeps the official not-awake/sleep condition as part of the landing termination logic.
+
+---
+
+## Reduced-Order LunarLander
+
+The reduced model abstracts away the rotational dynamics. The policy does not observe the actual angle $\theta$ or angular velocity $\dot{\theta}$. Instead, the policy directly commands a desired attitude reference $\theta_t^\star$.
+
+The reduced policy observation is
+
+$$
+o_t^R =
+(x_t,\; y_t,\; v_{x,t},\; v_{y,t},\; \theta_{t-1}^\star,\; c_{L,t},\; c_{R,t}).
+$$
+
+The previous commanded attitude $\theta_{t-1}^\star$ is included in the observation so that the attitude-reference variation is available to the policy.
+
+The reduced policy action is
+
+$$
+a_t^R = (u_{\mathrm{main},t},\; a_{\theta,t}),
+$$
+
+where
+
+$$
+\theta_t^\star = \theta_{\max} a_{\theta,t},
+\qquad
+ a_{\theta,t}\in[-1,1].
+$$
+
+In the experiments in this repository,
+
+$$
+\theta_{\max}=20^\circ.
+$$
+
+During reduced-order training, the commanded attitude is imposed directly in the reduced environment. The reduced model therefore removes the attitude dynamics and does not simulate the side boosters required to realize $\theta_t^\star$. The reduced model keeps the translational effect of the main engine under the commanded attitude, but it does not include side-thruster actuation or side-thruster fuel penalty.
+
+---
+
+## Training Reward
+
+The reduced model distinguishes between the task reward and the training reward. The task reward follows the LunarLander-style shaping and terminal reward structure, with main-engine fuel penalty included. Since the reduced model does not use side-thruster actions, there is no side-thruster fuel penalty in reduced-order training.
+
+The training reward is
+
+$$
+r_t^{\mathrm{train}}
+=
+r_t^{\mathrm{task}}
+-
+\lambda
+\left|\theta_t^\star-\theta_{t-1}^\star\right|
+-
+c_{\mathrm{step}}.
+$$
+
+The step penalty used in the experiments is
+
+$$
+c_{\mathrm{step}} = 0.02.
+$$
+
+The commanded-attitude variation term is
+
+$$
+c_t^{\theta}
+=
+\left|\theta_t^\star-\theta_{t-1}^\star\right|.
+$$
+
+The corresponding discounted reference-variation objective is
+
+$$
+J_R(\pi)
+=
+\mathbb{E}_{R,\pi}
+\left[
+\sum_{t=0}^{\infty}
+\gamma^t
+\left|\theta_t^\star-\theta_{t-1}^\star\right|
+\right].
+$$
+
+The parameter $\lambda$ is used as a Lagrange-style weight to encourage smoother commanded-attitude sequences during reduced-order training.
+
+---
+
+## Full-Order Deployment
+
+During deployment, the same reduced policy is evaluated in the full LunarLander model. The full model has rotational dynamics and side thrusters. The reduced policy still outputs
+
+$$
+(u_{\mathrm{main},t},\; \theta_t^\star),
+$$
+
+but now $\theta_t^\star$ is only a reference. The actual angle $\theta_t$ must track this reference through an inner-loop controller.
+
+The policy input during full deployment is constructed from the full observation as
+
+$$
+o_t^K =
+(x_t,\; y_t,\; v_{x,t},\; v_{y,t},\; \theta_{t-1}^\star,\; c_{L,t},\; c_{R,t}).
+$$
+
+The full angle $\theta_t$ and angular velocity $\dot{\theta}_t$ are not given to the policy. They are used only by the inner-loop controller.
+
+---
+
+## Inner-Loop PD Controller
+
+The deployed inner-loop controller tracks the commanded attitude reference using a PD law. The attitude tracking error is
+
+$$
+e_t = \operatorname{wrap}(\theta_t^\star-\theta_t).
+$$
+
+The derivative of the reference is estimated using a filtered finite difference:
+
+$$
+\dot{\theta}_{f,t}^\star
+=
+\alpha \dot{\theta}_{f,t-1}^\star
++
+(1-\alpha)
+\frac{
+\operatorname{wrap}(\theta_t^\star-\theta_{t-1}^\star)
+}{\Delta t}.
+$$
+
+The controller effort is
+
+$$
+u_t^{\mathrm{effort}}
+=
+K_p e_t
++
+K_d
+\left(
+\dot{\theta}_{f,t}^\star-\dot{\theta}_t
+\right).
+$$
+
+The gains are parameterized by natural frequency and damping ratio:
+
+$$
+K_p=\omega_n^2,
+\qquad
+K_d=2\zeta\omega_n.
+$$
+
+The controller effort is mapped to the side-thruster command of the full LunarLander. When leg contact is detected, the side command can be set to zero to avoid unnecessary side actuation after touchdown.
+
+---
+
+## Reset Distributions
+
+This repository contains two main experimental settings.
+
+### Official reset
+
+In the official reset setting, the reduced policy is trained and evaluated using the default LunarLander reset distribution. The official reset distribution produces a narrow and highly structured relationship between the initial lateral position and lateral velocity.
+
+![Official reset initial x-vx distribution](results/official_reset_12upd/official_reset_initial_x_vx_distribution.png)
+
+Results for this setting are stored in
 
 ```text
-src/train_reduced_lander_objectivefix.py
-src/compare_simple_to_full_transfer.py
-src/common_metrics_from_saved_trajectories.py
-src/plot_common_success_controllers_only.py
-src/lunar_lander.py
+results/official_reset_12upd/
+models/official_reset_12upd/
+media/videos/official_reset_12upd/
 ```
 
-## Zero-shot transfer formulation
+### Lateral reset
 
-A policy is trained in the simplified/reduced Lunar Lander model:
+In the lateral reset setting, the reduced policy is trained using a wider lateral reset distribution:
 
-```math
-\pi_{\theta}^{\mathrm{red}} = \arg\max_{\pi_\theta} \; \mathbb{E}_{\tau \sim P_{\mathrm{red}}, \pi_\theta}
-\left[ \sum_{t=0}^{T} \gamma^t r_t \right]
+$$
+x_0 \sim \mathrm{Uniform}[-0.8,0.8],
+$$
+
+$$
+v_{x,0} \sim \mathrm{Uniform}[-0.8,0.8].
+$$
+
+This setting is used to evaluate transfer under stronger lateral motion than the official reset distribution.
+
+Results for this setting are stored in
+
+```text
+results/lateral_reset_x08_vx08_12upd/
+models/lateral_reset_x08_vx08_12upd/
+media/videos/lateral_reset_x08_vx08_12upd/
 ```
 
-The trained reduced policy is then evaluated in the full Lunar Lander model without additional training:
+Some internal script names use the word `stress` because this reset was originally developed as a stress-test setting. In the repository documentation, it is referred to as the lateral reset.
 
-```math
-J_{\mathrm{full}}(\pi_{\theta}^{\mathrm{red}}) =
-\mathbb{E}_{\tau \sim P_{\mathrm{full}}, \pi_{\theta}^{\mathrm{red}}}
-\left[ \sum_{t=0}^{T} \gamma^t r_t \right]
-```
+---
 
-This is a zero-shot transfer setting because the policy parameters are not updated during evaluation in the full model.
+## Training Protocol
+
+The training pipeline follows three stages.
+
+### Stage 1: cold training
+
+A reduced-order $\lambda=0$ policy is trained from scratch.
+
+### Stage 2: warm continuation
+
+The $\lambda=0$ policy is warm-started and trained further to obtain a stronger base policy.
+
+### Stage 3: lambda sweep
+
+From the warm base, policies are trained for different values of $\lambda$. These policies are then transferred to the full LunarLander model and evaluated over a grid of inner-loop gains.
+
+For the official-reset experiments, the lambda sweep includes
+
+$$
+\lambda \in
+\{0,3,10,15,20,30,50,100,200,500,1000\}.
+$$
+
+For the lateral-reset experiments, the lambda sweep includes
+
+$$
+\lambda \in
+\{0,15,30,50,100,200,500,1000\}.
+$$
+
+---
 
 ## Results
 
-Final common-metrics results are stored in:
+The repository includes reduced-model trends, full-order deployment summaries, transfer heatmaps, and selected deployment videos for both reset settings.
 
-`results/zero_shot_transfer_158_seeds/`
+### Official reset
 
-This folder includes:
+Reduced-model trends:
 
-- `metrics_common.csv`
-- `metrics_common.json`
-- `with_original/`
-- `without_original/`
+![Official reset reduced trends](results/official_reset_12upd/reduced_trends/reduced_return_and_variation_trends.png)
 
-The plots summarize performance across regimes such as nominal, windy, biased, delay, and hard settings.
+Best deployed task return over the gain grid:
 
-## Overlay videos
+![Official reset transfer heatmap](results/official_reset_12upd/transfer_heatmaps/best_deployed_discounted_task_return_heatmap.png)
 
-Overlay comparison videos across deployment regimes are included in `media/videos/`.
+### Lateral reset
 
-- [Nominal regime overlay video](media/videos/official_compare_nominal_seed10230.mp4)
-- [Biased regime overlay video](media/videos/official_compare_biased_seed10230.mp4)
-- [Windy regime overlay video](media/videos/official_compare_windy_seed10230.mp4)
-- [Hard regime overlay video](media/videos/official_compare_hard_seed10230_1.mp4)
+Reduced-model trends:
 
-These videos show qualitative side-by-side behavior of the lander across different deployment regimes.
+![Lateral reset reduced trends](results/lateral_reset_x08_vx08_12upd/reduced_trends/reduced_return_and_variation_trends.png)
 
-### GIF previews
+Best deployed task return over the gain grid:
 
-#### Nominal regime
+![Lateral reset transfer heatmap](results/lateral_reset_x08_vx08_12upd/transfer_heatmaps/best_deployed_discounted_task_return_heatmap.png)
 
-![Nominal overlay](media/gifs/official_compare_nominal_seed10230.gif)
+### Wind deployment variant
 
-#### Biased regime
+The lateral-reset policies are trained without wind. We also evaluate the same trained policies in the full LunarLander with wind enabled, using wind power $15.0$ and turbulence power $1.5$. This is a deployment-only change; no additional wind training is used.
 
-![Biased overlay](media/gifs/official_compare_biased_seed10230.gif)
+Wind-deployment heatmaps are stored in
 
-#### Windy regime
+```text
+results/lateral_reset_x08_vx08_12upd/wind_power15_turbulence1p5/
+```
 
-![Windy overlay](media/gifs/official_compare_windy_seed10230.gif)
+Best deployed task return under wind:
 
-#### Hard regime
+![Lateral reset wind deployment heatmap](results/lateral_reset_x08_vx08_12upd/wind_power15_turbulence1p5/transfer_heatmaps/best_deployed_discounted_task_return_heatmap.png)
 
-![Hard overlay](media/gifs/official_compare_hard_seed10230_1.gif)
+Additional heatmaps for tracking error and deployed reference variation are stored in each `transfer_heatmaps/` folder.
 
-## Goal
+---
 
-The goal of this project is to evaluate whether a policy trained in a simple/reduced Lunar Lander setting can transfer zero-shot to the full Lunar Lander setting, and how that transfer compares with alternative controllers and regime variations.
+## Videos
+
+Selected deployment videos are included for qualitative comparison.
+
+Official-reset videos:
+
+```text
+media/videos/official_reset_12upd/
+```
+
+Lateral-reset videos:
+
+```text
+media/videos/lateral_reset_x08_vx08_12upd/
+```
+
+Selected wind-deployment GIFs:
+
+```text
+media/gifs/lateral_reset_x08_vx08_12upd/wind_power15_turbulence1p5/
+```
+
+The selected video folders include low-return, middle-case, and high-return deployment examples. These videos compare the reduced-order commanded behavior with the full-order deployed behavior under the inner-loop controller.
+
+For inline display in GitHub, use one of the selected GIFs.
+
+---
+
+## Repository Structure
+
+```text
+src/
+    Training, deployment, plotting, evaluation, and video-generation scripts.
+
+commands/
+    Command records used to reproduce the training and evaluation runs.
+
+models/
+    Selected final reduced-order policy checkpoints and summaries.
+
+results/
+    Reduced-model summaries, deployment summaries, heatmaps, and trend plots.
+
+media/
+    Selected deployment videos and GIFs.
+
+legacy/
+    Earlier prototype code and results kept for project history.
+```
+
+---
+
+## Notes on the Legacy Folder
+
+The folder
+
+```text
+legacy/early_simple_to_full_attempt/
+```
+
+contains an earlier version of the project. It is preserved only for project history and comparison. The current reduced-order training and full-order deployment pipeline is implemented in the main `src/`, `models/`, `results/`, and `media/` folders.
+
+---
+
+## Project Status
+
+This is an active research repository. The code and results are organized to support experiments on transfer from reduced-order to full-order LunarLander dynamics with inner-loop attitude control.

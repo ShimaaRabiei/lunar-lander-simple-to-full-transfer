@@ -1,0 +1,16 @@
+{
+  "saved_pairs": 10,
+  "selection": "both_success",
+  "rows_scanned": 16,
+  "lambda_value": 30.0,
+  "inner_wn": 12.0,
+  "inner_zeta": 0.3,
+  "stress_x_range": [
+    -0.8,
+    0.8
+  ],
+  "stress_vx_range": [
+    -0.8,
+    0.8
+  ]
+}

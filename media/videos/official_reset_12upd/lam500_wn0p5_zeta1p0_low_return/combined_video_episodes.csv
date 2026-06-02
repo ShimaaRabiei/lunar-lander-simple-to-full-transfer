@@ -1,0 +1,23 @@
+combined_video,episode_index,full_common_task_return,full_length,full_official_return,full_success,keep,pair,reduced_length,reduced_success,reduced_task_return,seed
+,0,-48.294584911048354,272,-50.501056465112,False,False,,1000,False,71.57461509192356,1511897467
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam500_wn0p5_zeta1p0_low_return\pair_01_seed_1156069968_combined.mp4,1,197.14156195729691,682,193.24659790417957,True,True,1,680,True,197.53401232827463,1156069968
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam500_wn0p5_zeta1p0_low_return\pair_02_seed_747316575_combined.mp4,2,162.44533695923462,706,159.47900041937282,True,True,2,698,True,160.78847626093767,747316575
+,3,-80.6212428560608,287,-83.99044872661503,False,False,,801,True,186.78835333728347,329122178
+,4,-70.78791614314662,171,-72.07331555136845,False,False,,833,True,198.1563877221197,646131025
+,5,-56.74151334073263,184,-58.54798152651015,False,False,,1000,False,39.12850178331116,386281797
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam500_wn0p5_zeta1p0_low_return\pair_03_seed_469159189_combined.mp4,6,170.66711335231344,410,168.22642854928716,True,True,3,585,True,215.62781005613508,469159189
+,7,-93.41348227975159,183,-95.53773374982296,False,False,,1000,False,8.888882407173647,1241291005
+,8,-69.99658656632516,198,-71.46749337689961,False,False,,405,False,-20.33724491502508,825866776
+,9,-70.90645567587347,225,-73.16089413167734,False,False,,1000,False,38.74738401335784,401355324
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam500_wn0p5_zeta1p0_low_return\pair_04_seed_847717680_combined.mp4,10,188.38889543917657,542,183.81080485670742,True,True,4,571,True,182.64102311441678,847717680
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam500_wn0p5_zeta1p0_low_return\pair_05_seed_1843468895_combined.mp4,11,182.1058784287254,667,176.91072407985894,True,True,5,667,True,183.6997034283354,1843468895
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam500_wn0p5_zeta1p0_low_return\pair_06_seed_2089784483_combined.mp4,12,191.8640194987865,449,189.09698546749655,True,True,6,442,True,188.4464209310244,2089784483
+,13,175.10229938603717,635,169.96920339820448,True,False,,1000,False,65.21501545244831,2027634781
+,14,-344.8090887354307,758,-349.26405309632406,False,False,,1000,False,15.08753364561122,1649752016
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam500_wn0p5_zeta1p0_low_return\pair_07_seed_2013698973_combined.mp4,15,201.3480769170457,364,200.10668470618873,True,True,7,410,True,219.99836866185078,2013698973
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam500_wn0p5_zeta1p0_low_return\pair_08_seed_123927870_combined.mp4,16,175.09034233765055,657,172.54465176009066,True,True,8,648,True,173.13900541383788,123927870
+,17,-44.31816083254854,1000,-52.61850810110152,False,False,,461,True,220.49000733755526,1821182807
+,18,-75.05285383981638,195,-77.25223771177406,False,False,,845,False,-60.45103870875898,771268235
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam500_wn0p5_zeta1p0_low_return\pair_09_seed_829040292_combined.mp4,19,211.87890394154397,524,207.9867435282353,True,True,9,560,True,223.95034984796075,829040292
+,20,-291.25009822541125,586,-295.76887261133805,False,False,,490,True,219.20395763167764,500441914
+C:\Users\rabiei\My Research\reduced_order_lunar_lander_runs\selected_combined_videos_official_trained_official_eval\lam500_wn0p5_zeta1p0_low_return\pair_10_seed_1954303186_combined.mp4,21,196.97048575528171,577,193.76712035052037,True,True,10,556,True,207.31078136600553,1954303186
