@@ -12,17 +12,13 @@ The goal is to study whether penalizing rapid changes in the commanded attitude 
 
 The official continuous LunarLander observation is
 
-$$
-(x,\; y,\; v_x,\; v_y,\; \theta,\; \dot{\theta},\; c_L,\; c_R),
-$$
+$$(x,\; y,\; v_x,\; v_y,\; \theta,\; \dot{\theta},\; c_L,\; c_R),$$
 
 where $x,y$ are the lander position coordinates, $v_x,v_y$ are the linear velocities, $\theta$ is the attitude angle, $\dot{\theta}$ is the angular velocity, and $c_L,c_R$ indicate left and right leg contact.
 
 The continuous action has two components,
 
-$$
-u = (u_{\mathrm{main}},\; u_{\mathrm{side}}),
-$$
+$$u = (u_{\mathrm{main}},\; u_{\mathrm{side}}),$$
 
 where $u_{\mathrm{main}}$ controls the main engine and $u_{\mathrm{side}}$ controls the side boosters.
 
@@ -36,32 +32,21 @@ The reduced model abstracts away the rotational dynamics. The policy does not ob
 
 The reduced policy observation is
 
-$$
-o_t^R =
-(x_t,\; y_t,\; v_{x,t},\; v_{y,t},\; \theta_{t-1}^\star,\; c_{L,t},\; c_{R,t}).
-$$
+$$o_t^R = (x_t,\; y_t,\; v_{x,t},\; v_{y,t},\; \theta_{t-1}^\star,\; c_{L,t},\; c_{R,t}).$$
 
 The previous commanded attitude $\theta_{t-1}^\star$ is included in the observation so that the attitude-reference variation is available to the policy.
 
 The reduced policy action is
 
-$$
-a_t^R = (u_{\mathrm{main},t},\; a_{\theta,t}),
-$$
+$$a_t^R = (u_{\mathrm{main},t},\; a_{\theta,t}),$$
 
 where
 
-$$
-\theta_t^\star = \theta_{\max} a_{\theta,t},
-\qquad
- a_{\theta,t}\in[-1,1].
-$$
+$$\theta_t^\star = \theta_{\max} a_{\theta,t}, \qquad a_{\theta,t}\in[-1,1].$$
 
 In the experiments in this repository,
 
-$$
-\theta_{\max}=20^\circ.
-$$
+$$\theta_{\max}=20^\circ.$$
 
 During reduced-order training, the commanded attitude is imposed directly in the reduced environment. The reduced model therefore removes the attitude dynamics and does not simulate the side boosters required to realize $\theta_t^\star$. The reduced model keeps the translational effect of the main engine under the commanded attitude, but it does not include side-thruster actuation or side-thruster fuel penalty.
 
@@ -73,43 +58,19 @@ The reduced model distinguishes between the task reward and the training reward.
 
 The training reward is
 
-$$
-r_t^{\mathrm{train}}
-=
-r_t^{\mathrm{task}}
--
-\lambda
-\left|\theta_t^\star-\theta_{t-1}^\star\right|
--
-c_{\mathrm{step}}.
-$$
+$$r_t^{\mathrm{train}} = r_t^{\mathrm{task}} - \lambda \left|\theta_t^\star-\theta_{t-1}^\star\right| - c_{\mathrm{step}}.$$
 
 The step penalty used in the experiments is
 
-$$
-c_{\mathrm{step}} = 0.02.
-$$
+$$c_{\mathrm{step}} = 0.02.$$
 
 The commanded-attitude variation term is
 
-$$
-c_t^{\theta}
-=
-\left|\theta_t^\star-\theta_{t-1}^\star\right|.
-$$
+$$c_t^{\theta} = \left|\theta_t^\star-\theta_{t-1}^\star\right|.$$
 
 The corresponding discounted reference-variation objective is
 
-$$
-J_R(\pi)
-=
-\mathbb{E}_{R,\pi}
-\left[
-\sum_{t=0}^{\infty}
-\gamma^t
-\left|\theta_t^\star-\theta_{t-1}^\star\right|
-\right].
-$$
+$$J_R(\pi) = \mathbb{E}_{R,\pi}\left[\sum_{t=0}^{\infty}\gamma^t \left|\theta_t^\star-\theta_{t-1}^\star\right|\right].$$
 
 The parameter $\lambda$ is used as a Lagrange-style weight to encourage smoother commanded-attitude sequences during reduced-order training.
 
@@ -119,18 +80,13 @@ The parameter $\lambda$ is used as a Lagrange-style weight to encourage smoother
 
 During deployment, the same reduced policy is evaluated in the full LunarLander model. The full model has rotational dynamics and side thrusters. The reduced policy still outputs
 
-$$
-(u_{\mathrm{main},t},\; \theta_t^\star),
-$$
+$$(u_{\mathrm{main},t},\; \theta_t^\star),$$
 
 but now $\theta_t^\star$ is only a reference. The actual angle $\theta_t$ must track this reference through an inner-loop controller.
 
 The policy input during full deployment is constructed from the full observation as
 
-$$
-o_t^K =
-(x_t,\; y_t,\; v_{x,t},\; v_{y,t},\; \theta_{t-1}^\star,\; c_{L,t},\; c_{R,t}).
-$$
+$$o_t^K = (x_t,\; y_t,\; v_{x,t},\; v_{y,t},\; \theta_{t-1}^\star,\; c_{L,t},\; c_{R,t}).$$
 
 The full angle $\theta_t$ and angular velocity $\dot{\theta}_t$ are not given to the policy. They are used only by the inner-loop controller.
 
@@ -140,43 +96,19 @@ The full angle $\theta_t$ and angular velocity $\dot{\theta}_t$ are not given to
 
 The deployed inner-loop controller tracks the commanded attitude reference using a PD law. The attitude tracking error is
 
-$$
-e_t = \operatorname{wrap}(\theta_t^\star-\theta_t).
-$$
+$$e_t = \mathrm{wrap}(\theta_t^\star-\theta_t).$$
 
 The derivative of the reference is estimated using a filtered finite difference:
 
-$$
-\dot{\theta}_{f,t}^\star
-=
-\alpha \dot{\theta}_{f,t-1}^\star
-+
-(1-\alpha)
-\frac{
-\operatorname{wrap}(\theta_t^\star-\theta_{t-1}^\star)
-}{\Delta t}.
-$$
+$$\dot{\theta}_{f,t}^\star = \alpha \dot{\theta}_{f,t-1}^\star + (1-\alpha)\frac{\mathrm{wrap}(\theta_t^\star-\theta_{t-1}^\star)}{\Delta t}.$$
 
 The controller effort is
 
-$$
-u_t^{\mathrm{effort}}
-=
-K_p e_t
-+
-K_d
-\left(
-\dot{\theta}_{f,t}^\star-\dot{\theta}_t
-\right).
-$$
+$$u_t^{\mathrm{effort}} = K_p e_t + K_d\left(\dot{\theta}_{f,t}^\star-\dot{\theta}_t\right).$$
 
 The gains are parameterized by natural frequency and damping ratio:
 
-$$
-K_p=\omega_n^2,
-\qquad
-K_d=2\zeta\omega_n.
-$$
+$$K_p=\omega_n^2, \qquad K_d=2\zeta\omega_n.$$
 
 The controller effort is mapped to the side-thruster command of the full LunarLander. When leg contact is detected, the side command can be set to zero to avoid unnecessary side actuation after touchdown.
 
@@ -204,13 +136,9 @@ media/videos/official_reset_12upd/
 
 In the lateral reset setting, the reduced policy is trained using a wider lateral reset distribution:
 
-$$
-x_0 \sim \mathrm{Uniform}[-0.8,0.8],
-$$
+$$x_0 \sim \mathrm{Uniform}[-0.8,0.8],$$
 
-$$
-v_{x,0} \sim \mathrm{Uniform}[-0.8,0.8].
-$$
+$$v_{x,0} \sim \mathrm{Uniform}[-0.8,0.8].$$
 
 This setting is used to evaluate transfer under stronger lateral motion than the official reset distribution.
 
@@ -223,6 +151,22 @@ media/videos/lateral_reset_x08_vx08_12upd/
 ```
 
 Some internal script names use the word `stress` because this reset was originally developed as a stress-test setting. In the repository documentation, it is referred to as the lateral reset.
+
+### Wind deployment variant
+
+The lateral-reset policies are trained without wind. We also evaluate the same trained models under a wind deployment variant in the full LunarLander environment with wind enabled, using wind power $15$ and turbulence power $1.5$. This changes only the deployment condition; the reduced-order models are unchanged and no additional wind training is used.
+
+Wind-deployment results are stored in
+
+```text
+results/lateral_reset_x08_vx08_12upd/wind_power15_turbulence1p5/
+```
+
+Selected wind-deployment GIFs are stored in
+
+```text
+media/gifs/lateral_reset_x08_vx08_12upd/wind_power15_turbulence1p5/
+```
 
 ---
 
@@ -244,17 +188,11 @@ From the warm base, policies are trained for different values of $\lambda$. Thes
 
 For the official-reset experiments, the lambda sweep includes
 
-$$
-\lambda \in
-\{0,3,10,15,20,30,50,100,200,500,1000\}.
-$$
+$$\lambda \in \{0,3,10,15,20,30,50,100,200,500,1000\}.$$
 
 For the lateral-reset experiments, the lambda sweep includes
 
-$$
-\lambda \in
-\{0,15,30,50,100,200,500,1000\}.
-$$
+$$\lambda \in \{0,15,30,50,100,200,500,1000\}.$$
 
 ---
 
@@ -282,19 +220,21 @@ Best deployed task return over the gain grid:
 
 ![Lateral reset transfer heatmap](results/lateral_reset_x08_vx08_12upd/transfer_heatmaps/best_deployed_discounted_task_return_heatmap.png)
 
-### Wind deployment variant
+### Lateral reset with wind deployment
 
-The lateral-reset policies are trained without wind. We also evaluate the same trained policies in the full LunarLander with wind enabled, using wind power $15.0$ and turbulence power $1.5$. This is a deployment-only change; no additional wind training is used.
+The wind deployment variant uses the same lateral-reset policies and evaluates them with wind enabled in the full environment. The heatmaps include the wind setting in the plot title.
 
-Wind-deployment heatmaps are stored in
+Wind-deployment heatmaps:
 
 ```text
-results/lateral_reset_x08_vx08_12upd/wind_power15_turbulence1p5/
+results/lateral_reset_x08_vx08_12upd/wind_power15_turbulence1p5/transfer_heatmaps/
 ```
 
-Best deployed task return under wind:
+Selected wind-deployment GIFs:
 
-![Lateral reset wind deployment heatmap](results/lateral_reset_x08_vx08_12upd/wind_power15_turbulence1p5/transfer_heatmaps/best_deployed_discounted_task_return_heatmap.png)
+```text
+media/gifs/lateral_reset_x08_vx08_12upd/wind_power15_turbulence1p5/
+```
 
 Additional heatmaps for tracking error and deployed reference variation are stored in each `transfer_heatmaps/` folder.
 
@@ -316,15 +256,13 @@ Lateral-reset videos:
 media/videos/lateral_reset_x08_vx08_12upd/
 ```
 
-Selected wind-deployment GIFs:
+Wind-deployment GIFs:
 
 ```text
 media/gifs/lateral_reset_x08_vx08_12upd/wind_power15_turbulence1p5/
 ```
 
 The selected video folders include low-return, middle-case, and high-return deployment examples. These videos compare the reduced-order commanded behavior with the full-order deployed behavior under the inner-loop controller.
-
-For inline display in GitHub, use one of the selected GIFs.
 
 ---
 
